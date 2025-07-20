@@ -110,13 +110,35 @@ def init_openai():
 def create_tables(supabase: Client):
     """데이터베이스 테이블 생성 (즐겨찾기만)"""
     try:
-        # 즐겨찾기 테이블만 확인
-        supabase.table('favorites').select('*').limit(1).execute()
-    except Exception:
-        st.info("📋 즐겨찾기 테이블을 생성합니다...")
-        st.warning("⚠️ Supabase Dashboard에서 다음 SQL을 실행해주세요:")
+        # 즐겨찾기 테이블만 확인 - 더 간단한 방법으로 변경
+        result = supabase.table('favorites').select('id').limit(1).execute()
+        st.success("✅ 데이터베이스 연결 성공!")
+        return True  # 테이블이 존재하고 접근 가능
+    except Exception as e:
+        error_message = str(e).lower()
         
-        sql_create_tables = """
+        # 권한이나 접근 문제인 경우 - 계속 진행하도록 수정
+        if ("permission" in error_message or 
+            "policy" in error_message or 
+            "rls" in error_message or
+            "row level security" in error_message or
+            "insufficient privilege" in error_message):
+            st.warning("⚠️ 데이터베이스 접근 권한 문제가 있습니다. RLS 정책을 확인해주세요.")
+            st.info("📋 Supabase Dashboard에서 다음 RLS 정책만 실행하세요:")
+            
+            rls_policy = """
+-- RLS 정책 설정 (테이블이 이미 존재하는 경우)
+ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public access" ON favorites FOR ALL USING (true);
+            """
+            st.code(rls_policy, language='sql')
+            st.warning("⚠️ 위 SQL 실행 후 새로고침하거나, 일단 앱을 계속 사용해보세요.")
+            return True  # 일단 계속 진행
+        else:
+            st.info("📋 즐겨찾기 테이블을 생성합니다...")
+            st.warning("⚠️ Supabase Dashboard에서 다음 SQL을 실행해주세요:")
+            
+            sql_create_tables = """
 -- 즐겨찾기 테이블 (북마크한 단어들만 저장)
 CREATE TABLE favorites (
     id SERIAL PRIMARY KEY,
@@ -136,7 +158,10 @@ CREATE POLICY "Public access" ON favorites FOR ALL USING (true);
         """
         
         st.code(sql_create_tables, language='sql')
+        st.info("💡 SQL 실행 후 브라우저를 새로고침하세요.")
         st.stop()
+        
+    return False  # 테이블 접근 불가
 
 def generate_word_with_openai(openai_client: OpenAI, age_group: int) -> Dict:
     """OpenAI로 연령별 단어 생성"""
