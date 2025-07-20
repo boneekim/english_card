@@ -17,32 +17,32 @@
 
 ## 🚀 설치 및 실행
 
-### 옵션 1: SQLite 버전 (간단한 로컬 실행)
-
-1. **필요한 패키지 설치**
-   ```bash
-   python3 -m pip install -r requirements.txt
-   ```
-
-2. **앱 실행**
-   ```bash
-   streamlit run streamlit_app.py
-   ```
-
-3. **브라우저에서 접속**
-   - 기본 주소: `http://localhost:8501`
-
-### 옵션 2: Supabase 버전 (클라우드 데이터베이스) ⭐ 추천
+### 옵션 1: 로컬 실행 🖥️
 
 1. **Supabase 설정**
    - 📋 **[SUPABASE_SETUP.md](SUPABASE_SETUP.md)** 가이드를 따라 설정
    - 무료로 클라우드 데이터베이스 사용 가능
-   - 여러 기기에서 학습 진행상황 동기화
 
-2. **앱 실행**
+2. **필요한 패키지 설치**
    ```bash
-   streamlit run streamlit_app_supabase.py
+   python3 -m pip install -r requirements.txt
    ```
+
+3. **앱 실행**
+   ```bash
+   streamlit run streamlit_app.py
+   ```
+
+4. **브라우저에서 접속**
+   - 기본 주소: `http://localhost:8501`
+
+### 옵션 2: Streamlit Cloud 배포 ☁️ ⭐ 추천
+
+1. **Streamlit Cloud 배포**
+   - ☁️ **[STREAMLIT_CLOUD_DEPLOYMENT.md](STREAMLIT_CLOUD_DEPLOYMENT.md)** 가이드를 따라 설정
+   - **완전 무료로 온라인 배포!**
+   - 전 세계 어디서나 접속 가능
+   - 모바일에서도 완벽 동작
 
 ## 📱 사용법
 
@@ -74,24 +74,25 @@
 ## 🛠️ 기술 스택
 
 - **Frontend**: Streamlit
-- **Database**: SQLite / Supabase PostgreSQL
+- **Database**: Supabase PostgreSQL
 - **TTS**: Google Text-to-Speech (gTTS)
 - **Images**: Unsplash API
 - **Language**: Python 3.8+
-- **Cloud**: Supabase (Backend-as-a-Service)
+- **Cloud**: Supabase (Backend-as-a-Service) + Streamlit Cloud (호스팅)
 
 ## 📁 프로젝트 구조
 
 ```
 아이 연령별 단어 카드 슬라이드 프로그램/
-├── streamlit_app.py             # SQLite 버전 앱
-├── streamlit_app_supabase.py    # Supabase 버전 앱 ⭐
-├── requirements.txt             # 패키지 의존성
-├── README.md                   # 프로젝트 설명서
-├── SUPABASE_SETUP.md           # Supabase 설정 가이드
-├── supabase_config.py.example  # Supabase 설정 예시
-├── word_cards.db               # SQLite 데이터베이스 (자동 생성)
-└── components/                 # 기존 React 컴포넌트들 (참고용)
+├── streamlit_app.py                      # 메인 애플리케이션 ⭐
+├── requirements.txt                      # 패키지 의존성
+├── README.md                            # 프로젝트 설명서
+├── SUPABASE_SETUP.md                    # Supabase 설정 가이드
+├── STREAMLIT_CLOUD_DEPLOYMENT.md        # Streamlit Cloud 배포 가이드
+├── supabase_config.py.example           # 로컬 실행용 설정 예시
+├── .streamlit/
+│   └── secrets.toml.example             # Streamlit Cloud용 설정 예시
+└── components/                          # 기존 React 컴포넌트들 (참고용)
 ```
 
 ## 🎯 향후 개선 계획
