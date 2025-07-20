@@ -257,7 +257,7 @@ def display_word_card(card: Dict, container, supabase: Client):
             try:
                 response = requests.get(card['image_url'])
                 img = Image.open(io.BytesIO(response.content))
-                st.image(img, use_column_width=True, caption=f"{card['word']} ({card['translation']})")
+                st.image(img, use_container_width=True, caption=f"{card['word']} ({card['translation']})")
             except Exception as e:
                 st.error(f"이미지 로드 실패: {e}")
                 st.text("🖼️ 이미지를 불러올 수 없습니다")
