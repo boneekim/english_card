@@ -1,0 +1,5 @@
+# Supabase 설정 예시
+# 이 파일을 supabase_config.py로 복사하고 실제 값을 입력하세요
+
+SUPABASE_URL = "https://your-project-ref.supabase.co"
+SUPABASE_ANON_KEY = "your-anon-key-here" 

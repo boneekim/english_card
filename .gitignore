@@ -57,4 +57,7 @@ Thumbs.db
 
 # Audio files (temporary TTS files)
 *.mp3
-*.wav 
+*.wav
+
+# Supabase config (contains API keys)
+supabase_config.py 
