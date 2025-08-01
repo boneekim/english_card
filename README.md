@@ -43,7 +43,7 @@ pip install -r requirements.txt
 
 ### 4. 애플리케이션 실행
 ```bash
-python app.py
+python3 app.py
 ```
 
 ### 5. 브라우저에서 접속
