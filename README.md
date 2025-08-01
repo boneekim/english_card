@@ -32,13 +32,13 @@ cd kids-english-cards
 
 ### 2. 가상환경 설정 (선택사항)
 ```bash
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
 ### 3. 의존성 설치
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### 4. 애플리케이션 실행
