@@ -1,8 +1,6 @@
 import streamlit as st
 import requests
 from urllib.parse import quote
-import base64
-from io import BytesIO
 import time
 
 # 페이지 설정
@@ -32,15 +30,6 @@ st.markdown("""
         border: 3px solid #e2e8f0;
         margin: 20px 0;
     }
-    .card-image {
-        width: 100%;
-        max-width: 400px;
-        height: 300px;
-        object-fit: cover;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        border: 2px solid #e2e8f0;
-    }
     .card-text {
         font-size: 24px;
         font-weight: bold;
@@ -64,6 +53,14 @@ st.markdown("""
         color: #4a5568;
         text-align: center;
     }
+    .stButton > button {
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: bold;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -73,12 +70,7 @@ CATEGORIES = {
     '탈것': 'vehicles', 
     '음식': 'food',
     '색깔': 'colors',
-    '가족': 'family',
-    '자연': 'nature',
-    '직업': 'jobs',
-    '집안': 'home',
-    '운동': 'sports',
-    '학용품': 'school supplies'
+    '가족': 'family'
 }
 
 AGE_GROUPS = {
@@ -210,8 +202,6 @@ if 'memorized_cards' not in st.session_state:
     st.session_state.memorized_cards = set()
 if 'difficult_cards' not in st.session_state:
     st.session_state.difficult_cards = set()
-if 'auto_slide' not in st.session_state:
-    st.session_state.auto_slide = False
 
 def get_cards(category, card_count):
     """카테고리별 단어 카드 생성"""
@@ -234,23 +224,37 @@ def get_cards(category, card_count):
     
     return cards
 
-def speak_word(word):
-    """TTS를 위한 JavaScript 코드 생성"""
-    js_code = f"""
-    <script>
-    function speakWord() {{
-        if ('speechSynthesis' in window) {{
-            const utterance = new SpeechSynthesisUtterance('{word}');
-            utterance.lang = 'en-US';
-            utterance.rate = 0.8;
-            utterance.pitch = 1.1;
-            speechSynthesis.speak(utterance);
+def create_tts_html(word):
+    """TTS를 위한 HTML/JavaScript 생성"""
+    html_code = f"""
+    <div>
+        <button onclick="speakWord()" style="
+            background: linear-gradient(45deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        ">🔊</button>
+        <script>
+        function speakWord() {{
+            if ('speechSynthesis' in window) {{
+                const utterance = new SpeechSynthesisUtterance('{word}');
+                utterance.lang = 'en-US';
+                utterance.rate = 0.8;
+                utterance.pitch = 1.1;
+                speechSynthesis.speak(utterance);
+            }} else {{
+                alert('이 브라우저는 음성 합성을 지원하지 않습니다.');
+            }}
         }}
-    }}
-    speakWord();
-    </script>
+        </script>
+    </div>
     """
-    st.components.v1.html(js_code, height=0)
+    return html_code
 
 # 메인 헤더
 st.markdown('<h1 class="main-header">🌟 아이들을 위한 영어 카드 🌟</h1>', unsafe_allow_html=True)
@@ -269,14 +273,6 @@ with st.sidebar:
         st.session_state.current_index = 0
         st.session_state.memorized_cards = set()
         st.session_state.difficult_cards = set()
-        st.rerun()
-    
-    st.divider()
-    
-    # 자동 슬라이드 토글
-    auto_slide = st.toggle("🔄 자동 슬라이드", value=st.session_state.auto_slide)
-    if auto_slide != st.session_state.auto_slide:
-        st.session_state.auto_slide = auto_slide
         st.rerun()
     
     st.divider()
@@ -326,9 +322,9 @@ if st.session_state.cards:
         with col2:
             # 이미지 표시
             try:
-                st.image(current_card['image_url'], use_container_width=True)
+                st.image(current_card['image_url'], use_container_width=True, caption=current_card['english'])
             except:
-                st.info(f"이미지를 불러올 수 없습니다: {current_card['english']}")
+                st.info(f"📷 이미지: {current_card['english']}")
             
             # 텍스트 표시
             st.markdown(
@@ -341,16 +337,15 @@ if st.session_state.cards:
                 unsafe_allow_html=True
             )
             
+            # 음성 버튼
+            st.components.v1.html(create_tts_html(current_card['english']), height=70)
+            
             # 액션 버튼들
-            col_a, col_b, col_c, col_d = st.columns(4)
+            col_a, col_b, col_c = st.columns(3)
             
             with col_a:
-                if st.button("🔊", help="음성 듣기"):
-                    speak_word(current_card['english'])
-            
-            with col_b:
-                memorized_text = "✅" if actual_index in st.session_state.memorized_cards else "☑️"
-                if st.button(memorized_text, help="외웠어요"):
+                memorized_text = "✅ 외웠어요" if actual_index in st.session_state.memorized_cards else "☑️ 외웠어요"
+                if st.button(memorized_text, key=f"memorized_{actual_index}"):
                     if actual_index in st.session_state.memorized_cards:
                         st.session_state.memorized_cards.remove(actual_index)
                     else:
@@ -358,9 +353,9 @@ if st.session_state.cards:
                         st.session_state.difficult_cards.discard(actual_index)
                     st.rerun()
             
-            with col_c:
-                difficult_text = "❌" if actual_index in st.session_state.difficult_cards else "⭕"
-                if st.button(difficult_text, help="어려워요"):
+            with col_b:
+                difficult_text = "❌ 어려워요" if actual_index in st.session_state.difficult_cards else "⭕ 어려워요"
+                if st.button(difficult_text, key=f"difficult_{actual_index}"):
                     if actual_index in st.session_state.difficult_cards:
                         st.session_state.difficult_cards.remove(actual_index)
                     else:
@@ -368,8 +363,8 @@ if st.session_state.cards:
                         st.session_state.memorized_cards.discard(actual_index)
                     st.rerun()
             
-            with col_d:
-                if st.button("🔄", help="새로고침"):
+            with col_c:
+                if st.button("🔄 새로고침", key=f"refresh_{actual_index}"):
                     st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
@@ -385,15 +380,6 @@ if st.session_state.cards:
             if st.button("다음 ➡️", disabled=(current_filtered_index == len(filtered_indices) - 1)):
                 st.session_state.current_index = min(len(filtered_indices) - 1, st.session_state.current_index + 1)
                 st.rerun()
-        
-        # 자동 슬라이드 기능
-        if st.session_state.auto_slide:
-            time.sleep(slide_time)
-            if current_filtered_index < len(filtered_indices) - 1:
-                st.session_state.current_index += 1
-            else:
-                st.session_state.current_index = 0
-            st.rerun()
         
         # 통계 표시
         with st.sidebar:
@@ -421,6 +407,12 @@ else:
     - 📚 **카테고리별**: 동물, 탈것, 음식, 색깔, 가족
     - 🔊 **음성 읽기**: 영어 단어 발음 듣기
     - ✅ **학습 관리**: 외운 카드와 어려운 카드 분류
-    - 🔄 **자동 슬라이드**: 설정한 시간마다 자동 넘김
     - 📱 **반응형**: 모바일, 태블릿, PC 모두 지원
+    
+    ## 🎮 사용법
+    1. 왼쪽 사이드바에서 연령과 카테고리 선택
+    2. '🚀 카드 시작하기' 버튼 클릭
+    3. 🔊 버튼으로 음성 듣기
+    4. ✅ 외웠어요, ❌ 어려워요 버튼으로 학습 관리
+    5. ⬅️➡️ 버튼으로 카드 넘기기
     """)
