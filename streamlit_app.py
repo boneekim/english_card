@@ -47,6 +47,12 @@ st.markdown("""
         font-size: 32px;
         font-weight: bold;
     }
+    .emoji-display {
+        font-size: 120px;
+        margin: 20px 0;
+        text-align: center;
+        line-height: 1.2;
+    }
     .progress-text {
         font-size: 18px;
         font-weight: bold;
@@ -60,6 +66,11 @@ st.markdown("""
         border-radius: 10px;
         padding: 10px 20px;
         font-weight: bold;
+        margin: 5px;
+    }
+    .action-button {
+        margin: 5px !important;
+        width: 100% !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -79,117 +90,117 @@ AGE_GROUPS = {
     '9-12세': '9-12 years old'
 }
 
-# 카테고리별 단어 목록
+# 카테고리별 단어 목록 (이모지 포함)
 WORD_LISTS = {
     'animals': [
-        {'korean': '강아지', 'english': 'dog'},
-        {'korean': '고양이', 'english': 'cat'},
-        {'korean': '토끼', 'english': 'rabbit'},
-        {'korean': '코끼리', 'english': 'elephant'},
-        {'korean': '사자', 'english': 'lion'},
-        {'korean': '호랑이', 'english': 'tiger'},
-        {'korean': '원숭이', 'english': 'monkey'},
-        {'korean': '곰', 'english': 'bear'},
-        {'korean': '새', 'english': 'bird'},
-        {'korean': '물고기', 'english': 'fish'},
-        {'korean': '말', 'english': 'horse'},
-        {'korean': '소', 'english': 'cow'},
-        {'korean': '돼지', 'english': 'pig'},
-        {'korean': '양', 'english': 'sheep'},
-        {'korean': '닭', 'english': 'chicken'},
-        {'korean': '오리', 'english': 'duck'},
-        {'korean': '펭귄', 'english': 'penguin'},
-        {'korean': '기린', 'english': 'giraffe'},
-        {'korean': '얼룩말', 'english': 'zebra'},
-        {'korean': '개구리', 'english': 'frog'}
+        {'korean': '강아지', 'english': 'dog', 'emoji': '🐶'},
+        {'korean': '고양이', 'english': 'cat', 'emoji': '🐱'},
+        {'korean': '토끼', 'english': 'rabbit', 'emoji': '🐰'},
+        {'korean': '코끼리', 'english': 'elephant', 'emoji': '🐘'},
+        {'korean': '사자', 'english': 'lion', 'emoji': '🦁'},
+        {'korean': '호랑이', 'english': 'tiger', 'emoji': '🐅'},
+        {'korean': '원숭이', 'english': 'monkey', 'emoji': '🐵'},
+        {'korean': '곰', 'english': 'bear', 'emoji': '🐻'},
+        {'korean': '새', 'english': 'bird', 'emoji': '🐦'},
+        {'korean': '물고기', 'english': 'fish', 'emoji': '🐠'},
+        {'korean': '말', 'english': 'horse', 'emoji': '🐴'},
+        {'korean': '소', 'english': 'cow', 'emoji': '🐄'},
+        {'korean': '돼지', 'english': 'pig', 'emoji': '🐷'},
+        {'korean': '양', 'english': 'sheep', 'emoji': '🐑'},
+        {'korean': '닭', 'english': 'chicken', 'emoji': '🐔'},
+        {'korean': '오리', 'english': 'duck', 'emoji': '🦆'},
+        {'korean': '펭귄', 'english': 'penguin', 'emoji': '🐧'},
+        {'korean': '기린', 'english': 'giraffe', 'emoji': '🦒'},
+        {'korean': '얼룩말', 'english': 'zebra', 'emoji': '🦓'},
+        {'korean': '개구리', 'english': 'frog', 'emoji': '🐸'}
     ],
     'vehicles': [
-        {'korean': '자동차', 'english': 'car'},
-        {'korean': '버스', 'english': 'bus'},
-        {'korean': '기차', 'english': 'train'},
-        {'korean': '비행기', 'english': 'airplane'},
-        {'korean': '배', 'english': 'ship'},
-        {'korean': '자전거', 'english': 'bicycle'},
-        {'korean': '오토바이', 'english': 'motorcycle'},
-        {'korean': '트럭', 'english': 'truck'},
-        {'korean': '택시', 'english': 'taxi'},
-        {'korean': '앰뷸런스', 'english': 'ambulance'},
-        {'korean': '소방차', 'english': 'fire truck'},
-        {'korean': '경찰차', 'english': 'police car'},
-        {'korean': '헬리콥터', 'english': 'helicopter'},
-        {'korean': '지하철', 'english': 'subway'},
-        {'korean': '스쿠터', 'english': 'scooter'},
-        {'korean': '로켓', 'english': 'rocket'},
-        {'korean': '요트', 'english': 'yacht'},
-        {'korean': '잠수함', 'english': 'submarine'},
-        {'korean': '스케이트보드', 'english': 'skateboard'},
-        {'korean': '롤러스케이트', 'english': 'roller skates'}
+        {'korean': '자동차', 'english': 'car', 'emoji': '🚗'},
+        {'korean': '버스', 'english': 'bus', 'emoji': '🚌'},
+        {'korean': '기차', 'english': 'train', 'emoji': '🚂'},
+        {'korean': '비행기', 'english': 'airplane', 'emoji': '✈️'},
+        {'korean': '배', 'english': 'ship', 'emoji': '🚢'},
+        {'korean': '자전거', 'english': 'bicycle', 'emoji': '🚲'},
+        {'korean': '오토바이', 'english': 'motorcycle', 'emoji': '🏍️'},
+        {'korean': '트럭', 'english': 'truck', 'emoji': '🚚'},
+        {'korean': '택시', 'english': 'taxi', 'emoji': '🚕'},
+        {'korean': '앰뷸런스', 'english': 'ambulance', 'emoji': '🚑'},
+        {'korean': '소방차', 'english': 'fire truck', 'emoji': '🚒'},
+        {'korean': '경찰차', 'english': 'police car', 'emoji': '🚓'},
+        {'korean': '헬리콥터', 'english': 'helicopter', 'emoji': '🚁'},
+        {'korean': '지하철', 'english': 'subway', 'emoji': '🚇'},
+        {'korean': '스쿠터', 'english': 'scooter', 'emoji': '🛴'},
+        {'korean': '로켓', 'english': 'rocket', 'emoji': '🚀'},
+        {'korean': '요트', 'english': 'yacht', 'emoji': '⛵'},
+        {'korean': '잠수함', 'english': 'submarine', 'emoji': '🚤'},
+        {'korean': '스케이트보드', 'english': 'skateboard', 'emoji': '🛹'},
+        {'korean': '롤러스케이트', 'english': 'roller skates', 'emoji': '🛼'}
     ],
     'food': [
-        {'korean': '사과', 'english': 'apple'},
-        {'korean': '바나나', 'english': 'banana'},
-        {'korean': '오렌지', 'english': 'orange'},
-        {'korean': '딸기', 'english': 'strawberry'},
-        {'korean': '포도', 'english': 'grape'},
-        {'korean': '수박', 'english': 'watermelon'},
-        {'korean': '빵', 'english': 'bread'},
-        {'korean': '우유', 'english': 'milk'},
-        {'korean': '치즈', 'english': 'cheese'},
-        {'korean': '달걀', 'english': 'egg'},
-        {'korean': '쌀', 'english': 'rice'},
-        {'korean': '면', 'english': 'noodles'},
-        {'korean': '고기', 'english': 'meat'},
-        {'korean': '생선', 'english': 'fish'},
-        {'korean': '야채', 'english': 'vegetables'},
-        {'korean': '당근', 'english': 'carrot'},
-        {'korean': '토마토', 'english': 'tomato'},
-        {'korean': '감자', 'english': 'potato'},
-        {'korean': '아이스크림', 'english': 'ice cream'},
-        {'korean': '케이크', 'english': 'cake'}
+        {'korean': '사과', 'english': 'apple', 'emoji': '🍎'},
+        {'korean': '바나나', 'english': 'banana', 'emoji': '🍌'},
+        {'korean': '오렌지', 'english': 'orange', 'emoji': '🍊'},
+        {'korean': '딸기', 'english': 'strawberry', 'emoji': '🍓'},
+        {'korean': '포도', 'english': 'grape', 'emoji': '🍇'},
+        {'korean': '수박', 'english': 'watermelon', 'emoji': '🍉'},
+        {'korean': '빵', 'english': 'bread', 'emoji': '🍞'},
+        {'korean': '우유', 'english': 'milk', 'emoji': '🥛'},
+        {'korean': '치즈', 'english': 'cheese', 'emoji': '🧀'},
+        {'korean': '달걀', 'english': 'egg', 'emoji': '🥚'},
+        {'korean': '쌀', 'english': 'rice', 'emoji': '🍚'},
+        {'korean': '면', 'english': 'noodles', 'emoji': '🍝'},
+        {'korean': '고기', 'english': 'meat', 'emoji': '🍖'},
+        {'korean': '생선', 'english': 'fish', 'emoji': '🐟'},
+        {'korean': '야채', 'english': 'vegetables', 'emoji': '🥬'},
+        {'korean': '당근', 'english': 'carrot', 'emoji': '🥕'},
+        {'korean': '토마토', 'english': 'tomato', 'emoji': '🍅'},
+        {'korean': '감자', 'english': 'potato', 'emoji': '🥔'},
+        {'korean': '아이스크림', 'english': 'ice cream', 'emoji': '🍦'},
+        {'korean': '케이크', 'english': 'cake', 'emoji': '🎂'}
     ],
     'colors': [
-        {'korean': '빨간색', 'english': 'red'},
-        {'korean': '파란색', 'english': 'blue'},
-        {'korean': '노란색', 'english': 'yellow'},
-        {'korean': '초록색', 'english': 'green'},
-        {'korean': '주황색', 'english': 'orange'},
-        {'korean': '보라색', 'english': 'purple'},
-        {'korean': '분홍색', 'english': 'pink'},
-        {'korean': '갈색', 'english': 'brown'},
-        {'korean': '검은색', 'english': 'black'},
-        {'korean': '하얀색', 'english': 'white'},
-        {'korean': '회색', 'english': 'gray'},
-        {'korean': '금색', 'english': 'gold'},
-        {'korean': '은색', 'english': 'silver'},
-        {'korean': '하늘색', 'english': 'sky blue'},
-        {'korean': '연두색', 'english': 'light green'},
-        {'korean': '남색', 'english': 'navy'},
-        {'korean': '청록색', 'english': 'turquoise'},
-        {'korean': '자주색', 'english': 'violet'},
-        {'korean': '크림색', 'english': 'cream'},
-        {'korean': '베이지색', 'english': 'beige'}
+        {'korean': '빨간색', 'english': 'red', 'emoji': '🔴'},
+        {'korean': '파란색', 'english': 'blue', 'emoji': '🔵'},
+        {'korean': '노란색', 'english': 'yellow', 'emoji': '🟡'},
+        {'korean': '초록색', 'english': 'green', 'emoji': '🟢'},
+        {'korean': '주황색', 'english': 'orange', 'emoji': '🟠'},
+        {'korean': '보라색', 'english': 'purple', 'emoji': '🟣'},
+        {'korean': '분홍색', 'english': 'pink', 'emoji': '🩷'},
+        {'korean': '갈색', 'english': 'brown', 'emoji': '🤎'},
+        {'korean': '검은색', 'english': 'black', 'emoji': '⚫'},
+        {'korean': '하얀색', 'english': 'white', 'emoji': '⚪'},
+        {'korean': '회색', 'english': 'gray', 'emoji': '🩶'},
+        {'korean': '금색', 'english': 'gold', 'emoji': '🟨'},
+        {'korean': '은색', 'english': 'silver', 'emoji': '⚪'},
+        {'korean': '하늘색', 'english': 'sky blue', 'emoji': '🔵'},
+        {'korean': '연두색', 'english': 'light green', 'emoji': '🟢'},
+        {'korean': '남색', 'english': 'navy', 'emoji': '🔵'},
+        {'korean': '청록색', 'english': 'turquoise', 'emoji': '🔵'},
+        {'korean': '자주색', 'english': 'violet', 'emoji': '🟣'},
+        {'korean': '크림색', 'english': 'cream', 'emoji': '🟡'},
+        {'korean': '베이지색', 'english': 'beige', 'emoji': '🟤'}
     ],
     'family': [
-        {'korean': '엄마', 'english': 'mom'},
-        {'korean': '아빠', 'english': 'dad'},
-        {'korean': '할머니', 'english': 'grandmother'},
-        {'korean': '할아버지', 'english': 'grandfather'},
-        {'korean': '형', 'english': 'older brother'},
-        {'korean': '누나', 'english': 'older sister'},
-        {'korean': '동생', 'english': 'younger sibling'},
-        {'korean': '아기', 'english': 'baby'},
-        {'korean': '이모', 'english': 'aunt'},
-        {'korean': '삼촌', 'english': 'uncle'},
-        {'korean': '사촌', 'english': 'cousin'},
-        {'korean': '가족', 'english': 'family'},
-        {'korean': '부모님', 'english': 'parents'},
-        {'korean': '자녀', 'english': 'children'},
-        {'korean': '아들', 'english': 'son'},
-        {'korean': '딸', 'english': 'daughter'},
-        {'korean': '손자', 'english': 'grandson'},
-        {'korean': '손녀', 'english': 'granddaughter'},
-        {'korean': '조카', 'english': 'nephew/niece'},
-        {'korean': '친구', 'english': 'friend'}
+        {'korean': '엄마', 'english': 'mom', 'emoji': '��'},
+        {'korean': '아빠', 'english': 'dad', 'emoji': '👨'},
+        {'korean': '할머니', 'english': 'grandmother', 'emoji': '👵'},
+        {'korean': '할아버지', 'english': 'grandfather', 'emoji': '👴'},
+        {'korean': '형', 'english': 'older brother', 'emoji': '👦'},
+        {'korean': '누나', 'english': 'older sister', 'emoji': '👧'},
+        {'korean': '동생', 'english': 'younger sibling', 'emoji': '👶'},
+        {'korean': '아기', 'english': 'baby', 'emoji': '👶'},
+        {'korean': '이모', 'english': 'aunt', 'emoji': '👩'},
+        {'korean': '삼촌', 'english': 'uncle', 'emoji': '👨'},
+        {'korean': '사촌', 'english': 'cousin', 'emoji': '👫'},
+        {'korean': '가족', 'english': 'family', 'emoji': '👨‍👩‍👧‍👦'},
+        {'korean': '부모님', 'english': 'parents', 'emoji': '👫'},
+        {'korean': '자녀', 'english': 'children', 'emoji': '👧👦'},
+        {'korean': '아들', 'english': 'son', 'emoji': '👦'},
+        {'korean': '딸', 'english': 'daughter', 'emoji': '👧'},
+        {'korean': '손자', 'english': 'grandson', 'emoji': '👦'},
+        {'korean': '손녀', 'english': 'granddaughter', 'emoji': '👧'},
+        {'korean': '조카', 'english': 'nephew/niece', 'emoji': '👶'},
+        {'korean': '친구', 'english': 'friend', 'emoji': '👫'}
     ]
 }
 
@@ -214,11 +225,10 @@ def get_cards(category, card_count):
     
     cards = []
     for i, word in enumerate(selected_words):
-        image_url = f"https://source.unsplash.com/400x300/?{quote(word['english'])}"
         cards.append({
             'korean': word['korean'],
             'english': word['english'],
-            'image_url': image_url,
+            'emoji': word['emoji'],
             'id': i
         })
     
@@ -227,25 +237,30 @@ def get_cards(category, card_count):
 def create_tts_html(word):
     """TTS를 위한 HTML/JavaScript 생성"""
     html_code = f"""
-    <div>
+    <div style="text-align: center; margin: 10px 0;">
         <button onclick="speakWord()" style="
             background: linear-gradient(45deg, #48bb78, #38a169);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        ">🔊</button>
+            transition: transform 0.2s;
+        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">🔊</button>
         <script>
         function speakWord() {{
             if ('speechSynthesis' in window) {{
+                // 기존 음성 중지
+                speechSynthesis.cancel();
+                
                 const utterance = new SpeechSynthesisUtterance('{word}');
                 utterance.lang = 'en-US';
-                utterance.rate = 0.8;
-                utterance.pitch = 1.1;
+                utterance.rate = 0.7;
+                utterance.pitch = 1.0;
+                utterance.volume = 0.8;
                 speechSynthesis.speak(utterance);
             }} else {{
                 alert('이 브라우저는 음성 합성을 지원하지 않습니다.');
@@ -265,8 +280,7 @@ with st.sidebar:
     
     age_group = st.selectbox("아이 연령", list(AGE_GROUPS.keys()))
     category = st.selectbox("카테고리", list(CATEGORIES.keys()))
-    slide_time = st.slider("자동슬라이드 시간(초)", 1, 10, 3)
-    card_count = st.slider("카드 수", 5, 50, 20)
+    card_count = st.slider("카드 수", 5, 20, 10)
     
     if st.button("🚀 카드 시작하기", use_container_width=True):
         st.session_state.cards = get_cards(CATEGORIES[category], card_count)
@@ -274,6 +288,14 @@ with st.sidebar:
         st.session_state.memorized_cards = set()
         st.session_state.difficult_cards = set()
         st.rerun()
+    
+    st.divider()
+    
+    # 자동 슬라이드 설정
+    st.header("⏰ 자동 슬라이드")
+    auto_slide = st.toggle("🔄 자동 슬라이드 활성화")
+    if auto_slide:
+        slide_interval = st.slider("슬라이드 간격(초)", 2, 10, 4)
     
     st.divider()
     
@@ -320,11 +342,11 @@ if st.session_state.cards:
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            # 이미지 표시
-            try:
-                st.image(current_card['image_url'], use_container_width=True, caption=current_card['english'])
-            except:
-                st.info(f"📷 이미지: {current_card['english']}")
+            # 이모지 표시 (이미지 대신)
+            st.markdown(
+                f'<div class="emoji-display">{current_card["emoji"]}</div>',
+                unsafe_allow_html=True
+            )
             
             # 텍스트 표시
             st.markdown(
@@ -338,14 +360,14 @@ if st.session_state.cards:
             )
             
             # 음성 버튼
-            st.components.v1.html(create_tts_html(current_card['english']), height=70)
+            st.components.v1.html(create_tts_html(current_card['english']), height=80)
             
             # 액션 버튼들
             col_a, col_b, col_c = st.columns(3)
             
             with col_a:
-                memorized_text = "✅ 외웠어요" if actual_index in st.session_state.memorized_cards else "☑️ 외웠어요"
-                if st.button(memorized_text, key=f"memorized_{actual_index}"):
+                memorized_text = "✅ 외웠어요!" if actual_index in st.session_state.memorized_cards else "☑️ 외웠어요"
+                if st.button(memorized_text, key=f"memorized_{actual_index}", use_container_width=True):
                     if actual_index in st.session_state.memorized_cards:
                         st.session_state.memorized_cards.remove(actual_index)
                     else:
@@ -354,8 +376,8 @@ if st.session_state.cards:
                     st.rerun()
             
             with col_b:
-                difficult_text = "❌ 어려워요" if actual_index in st.session_state.difficult_cards else "⭕ 어려워요"
-                if st.button(difficult_text, key=f"difficult_{actual_index}"):
+                difficult_text = "❌ 어려워요!" if actual_index in st.session_state.difficult_cards else "⭕ 어려워요"
+                if st.button(difficult_text, key=f"difficult_{actual_index}", use_container_width=True):
                     if actual_index in st.session_state.difficult_cards:
                         st.session_state.difficult_cards.remove(actual_index)
                     else:
@@ -364,55 +386,110 @@ if st.session_state.cards:
                     st.rerun()
             
             with col_c:
-                if st.button("🔄 새로고침", key=f"refresh_{actual_index}"):
+                if st.button("🔄 새로고침", key=f"refresh_{actual_index}", use_container_width=True):
                     st.rerun()
         
         st.markdown('</div>', unsafe_allow_html=True)
         
         # 네비게이션 버튼
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col1:
-            if st.button("⬅️ 이전", disabled=(current_filtered_index == 0)):
+        col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
+        
+        with col2:
+            if st.button("⬅️ 이전", disabled=(current_filtered_index == 0), use_container_width=True):
                 st.session_state.current_index = max(0, st.session_state.current_index - 1)
                 st.rerun()
         
-        with col3:
-            if st.button("다음 ➡️", disabled=(current_filtered_index == len(filtered_indices) - 1)):
+        with col4:
+            if st.button("다음 ➡️", disabled=(current_filtered_index == len(filtered_indices) - 1), use_container_width=True):
                 st.session_state.current_index = min(len(filtered_indices) - 1, st.session_state.current_index + 1)
                 st.rerun()
+        
+        # 자동 슬라이드 기능
+        if auto_slide and len(filtered_indices) > 1:
+            time.sleep(slide_interval)
+            if current_filtered_index < len(filtered_indices) - 1:
+                st.session_state.current_index += 1
+            else:
+                st.session_state.current_index = 0
+            st.rerun()
         
         # 통계 표시
         with st.sidebar:
             st.header("📊 학습 통계")
-            st.write(f"외운 카드: {len(st.session_state.memorized_cards)}개")
-            st.write(f"어려운 카드: {len(st.session_state.difficult_cards)}개")
-            st.write(f"총 카드: {len(st.session_state.cards)}개")
+            total_cards = len(st.session_state.cards)
+            memorized_count = len(st.session_state.memorized_cards)
+            difficult_count = len(st.session_state.difficult_cards)
             
-            if st.button("🔄 통계 초기화"):
+            st.metric("외운 카드", f"{memorized_count}개", f"{memorized_count/total_cards*100:.1f}%")
+            st.metric("어려운 카드", f"{difficult_count}개", f"{difficult_count/total_cards*100:.1f}%")
+            st.metric("총 카드", f"{total_cards}개")
+            
+            if st.button("🔄 통계 초기화", use_container_width=True):
                 st.session_state.memorized_cards = set()
                 st.session_state.difficult_cards = set()
                 st.rerun()
     
     else:
-        st.info(f"선택한 필터에 해당하는 카드가 없습니다.")
+        st.info(f"선택한 필터 '{show_filter}'에 해당하는 카드가 없습니다.")
 
 else:
-    st.info("설정을 선택하고 '카드 시작하기' 버튼을 눌러주세요! 👆")
+    st.info("설정을 선택하고 '🚀 카드 시작하기' 버튼을 눌러주세요! 👆")
     
     # 기능 소개
-    st.markdown("""
-    ## ✨ 주요 기능
+    col1, col2 = st.columns(2)
     
-    - 🎯 **연령별 맞춤**: 3-5세, 6-8세, 9-12세
-    - 📚 **카테고리별**: 동물, 탈것, 음식, 색깔, 가족
-    - 🔊 **음성 읽기**: 영어 단어 발음 듣기
-    - ✅ **학습 관리**: 외운 카드와 어려운 카드 분류
-    - 📱 **반응형**: 모바일, 태블릿, PC 모두 지원
+    with col1:
+        st.markdown("""
+        ## ✨ 주요 기능
+        
+        - 🎯 **연령별 맞춤**: 3-5세, 6-8세, 9-12세
+        - �� **카테고리별**: 동물, 탈것, 음식, 색깔, 가족
+        - 🔊 **음성 읽기**: 영어 단어 발음 듣기
+        - ✅ **학습 관리**: 외운 카드와 어려운 카드 분류
+        - 📊 **통계 추적**: 학습 진행상황 실시간 확인
+        - 📱 **반응형**: 모바일, 태블릿, PC 모두 지원
+        """)
     
-    ## 🎮 사용법
-    1. 왼쪽 사이드바에서 연령과 카테고리 선택
-    2. '🚀 카드 시작하기' 버튼 클릭
-    3. 🔊 버튼으로 음성 듣기
-    4. ✅ 외웠어요, ❌ 어려워요 버튼으로 학습 관리
-    5. ⬅️➡️ 버튼으로 카드 넘기기
-    """)
+    with col2:
+        st.markdown("""
+        ## 🎮 사용법
+        
+        1. **왼쪽 사이드바**에서 연령과 카테고리 선택
+        2. **'🚀 카드 시작하기'** 버튼 클릭
+        3. **🔊 버튼**으로 영어 발음 듣기
+        4. **✅ 외웠어요** 버튼으로 학습 완료 표시
+        5. **❌ 어려워요** 버튼으로 복습 필요 표시
+        6. **⬅️➡️ 버튼**으로 카드 넘기기
+        7. **필터 기능**으로 학습한 카드만 모아보기
+        """)
+        
+    # 미리보기 카드
+    st.markdown("### 🎪 미리보기")
+    preview_col1, preview_col2, preview_col3 = st.columns(3)
+    
+    with preview_col1:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin: 10px;">
+            <div style="font-size: 60px;">🐶</div>
+            <div style="color: #4a5568; font-size: 18px; margin: 10px 0;">강아지</div>
+            <div style="color: #667eea; font-size: 22px; font-weight: bold;">dog</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with preview_col2:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin: 10px;">
+            <div style="font-size: 60px;">🚗</div>
+            <div style="color: #4a5568; font-size: 18px; margin: 10px 0;">자동차</div>
+            <div style="color: #667eea; font-size: 22px; font-weight: bold;">car</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with preview_col3:
+        st.markdown("""
+        <div style="text-align: center; padding: 20px; background: white; border-radius: 15px; margin: 10px;">
+            <div style="font-size: 60px;">🍎</div>
+            <div style="color: #4a5568; font-size: 18px; margin: 10px 0;">사과</div>
+            <div style="color: #667eea; font-size: 22px; font-weight: bold;">apple</div>
+        </div>
+        """, unsafe_allow_html=True)
