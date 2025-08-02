@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from urllib.parse import quote
 import time
+import random
 
 # 페이지 설정
 st.set_page_config(
@@ -31,19 +32,28 @@ st.markdown("""
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         border: 3px solid #e2e8f0;
         margin: 20px auto;
-        max-width: 500px;
+        max-width: 450px;
         width: 100%;
+    }
+    .card-image-container {
+        width: 100%;
+        max-width: 320px;
+        height: 240px;
+        margin: 0 auto 20px auto;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f7fafc;
     }
     .card-image {
         width: 100%;
-        max-width: 350px;
-        height: 250px;
+        height: 100%;
         object-fit: cover;
-        border-radius: 15px;
-        margin: 0 auto 20px auto;
-        border: 3px solid #e2e8f0;
         display: block;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
     .card-text {
         font-size: 24px;
@@ -89,25 +99,24 @@ st.markdown("""
         margin: 15px auto;
         text-align: center;
     }
-    .image-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px 0;
-    }
     /* 이미지 로딩 상태 */
     .image-loading {
-        width: 350px;
-        height: 250px;
+        width: 100%;
+        height: 100%;
         background: linear-gradient(45deg, #f7fafc, #edf2f7);
-        border-radius: 15px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
         color: #718096;
-        margin: 0 auto 20px auto;
-        border: 3px solid #e2e8f0;
+        border-radius: 10px;
+    }
+    /* 메인 컨테이너 중앙 정렬 */
+    .main-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -127,117 +136,117 @@ AGE_GROUPS = {
     '9-12세': '9-12 years old'
 }
 
-# 카테고리별 단어 목록 (검색 키워드 포함)
+# 카테고리별 단어 목록 (이미지 검색 키워드 포함)
 WORD_LISTS = {
     'animals': [
-        {'korean': '강아지', 'english': 'dog', 'search': 'cute+puppy'},
-        {'korean': '고양이', 'english': 'cat', 'search': 'cute+kitten'},
-        {'korean': '토끼', 'english': 'rabbit', 'search': 'white+rabbit'},
-        {'korean': '코끼리', 'english': 'elephant', 'search': 'baby+elephant'},
-        {'korean': '사자', 'english': 'lion', 'search': 'lion+cub'},
-        {'korean': '호랑이', 'english': 'tiger', 'search': 'tiger+face'},
-        {'korean': '원숭이', 'english': 'monkey', 'search': 'cute+monkey'},
-        {'korean': '곰', 'english': 'bear', 'search': 'teddy+bear'},
-        {'korean': '새', 'english': 'bird', 'search': 'colorful+bird'},
-        {'korean': '물고기', 'english': 'fish', 'search': 'tropical+fish'},
-        {'korean': '말', 'english': 'horse', 'search': 'white+horse'},
-        {'korean': '소', 'english': 'cow', 'search': 'farm+cow'},
-        {'korean': '돼지', 'english': 'pig', 'search': 'cute+pig'},
-        {'korean': '양', 'english': 'sheep', 'search': 'fluffy+sheep'},
-        {'korean': '닭', 'english': 'chicken', 'search': 'farm+chicken'},
-        {'korean': '오리', 'english': 'duck', 'search': 'yellow+duck'},
-        {'korean': '펭귄', 'english': 'penguin', 'search': 'cute+penguin'},
-        {'korean': '기린', 'english': 'giraffe', 'search': 'baby+giraffe'},
-        {'korean': '얼룩말', 'english': 'zebra', 'search': 'zebra+stripes'},
-        {'korean': '개구리', 'english': 'frog', 'search': 'green+frog'}
+        {'korean': '강아지', 'english': 'dog', 'search_terms': ['cute dog', 'puppy', 'golden retriever']},
+        {'korean': '고양이', 'english': 'cat', 'search_terms': ['cute cat', 'kitten', 'orange cat']},
+        {'korean': '토끼', 'english': 'rabbit', 'search_terms': ['white rabbit', 'bunny', 'cute rabbit']},
+        {'korean': '코끼리', 'english': 'elephant', 'search_terms': ['baby elephant', 'elephant family', 'african elephant']},
+        {'korean': '사자', 'english': 'lion', 'search_terms': ['lion cub', 'male lion', 'lion family']},
+        {'korean': '호랑이', 'english': 'tiger', 'search_terms': ['tiger face', 'siberian tiger', 'tiger cub']},
+        {'korean': '원숭이', 'english': 'monkey', 'search_terms': ['cute monkey', 'baby monkey', 'chimpanzee']},
+        {'korean': '곰', 'english': 'bear', 'search_terms': ['brown bear', 'polar bear', 'bear cub']},
+        {'korean': '새', 'english': 'bird', 'search_terms': ['colorful bird', 'parrot', 'canary']},
+        {'korean': '물고기', 'english': 'fish', 'search_terms': ['tropical fish', 'goldfish', 'clownfish']},
+        {'korean': '말', 'english': 'horse', 'search_terms': ['white horse', 'brown horse', 'horse running']},
+        {'korean': '소', 'english': 'cow', 'search_terms': ['farm cow', 'black white cow', 'dairy cow']},
+        {'korean': '돼지', 'english': 'pig', 'search_terms': ['pink pig', 'farm pig', 'cute piglet']},
+        {'korean': '양', 'english': 'sheep', 'search_terms': ['fluffy sheep', 'white sheep', 'lamb']},
+        {'korean': '닭', 'english': 'chicken', 'search_terms': ['farm chicken', 'rooster', 'hen with chicks']},
+        {'korean': '오리', 'english': 'duck', 'search_terms': ['yellow duck', 'mallard duck', 'duckling']},
+        {'korean': '펭귄', 'english': 'penguin', 'search_terms': ['emperor penguin', 'penguin family', 'cute penguin']},
+        {'korean': '기린', 'english': 'giraffe', 'search_terms': ['tall giraffe', 'baby giraffe', 'giraffe eating']},
+        {'korean': '얼룩말', 'english': 'zebra', 'search_terms': ['zebra stripes', 'zebra herd', 'baby zebra']},
+        {'korean': '개구리', 'english': 'frog', 'search_terms': ['green frog', 'tree frog', 'cute frog']}
     ],
     'vehicles': [
-        {'korean': '자동차', 'english': 'car', 'search': 'red+car'},
-        {'korean': '버스', 'english': 'bus', 'search': 'school+bus'},
-        {'korean': '기차', 'english': 'train', 'search': 'steam+train'},
-        {'korean': '비행기', 'english': 'airplane', 'search': 'passenger+airplane'},
-        {'korean': '배', 'english': 'ship', 'search': 'cruise+ship'},
-        {'korean': '자전거', 'english': 'bicycle', 'search': 'red+bicycle'},
-        {'korean': '오토바이', 'english': 'motorcycle', 'search': 'sports+motorcycle'},
-        {'korean': '트럭', 'english': 'truck', 'search': 'delivery+truck'},
-        {'korean': '택시', 'english': 'taxi', 'search': 'yellow+taxi'},
-        {'korean': '앰뷸런스', 'english': 'ambulance', 'search': 'emergency+ambulance'},
-        {'korean': '소방차', 'english': 'fire truck', 'search': 'red+fire+truck'},
-        {'korean': '경찰차', 'english': 'police car', 'search': 'police+car'},
-        {'korean': '헬리콥터', 'english': 'helicopter', 'search': 'rescue+helicopter'},
-        {'korean': '지하철', 'english': 'subway', 'search': 'subway+train'},
-        {'korean': '스쿠터', 'english': 'scooter', 'search': 'electric+scooter'},
-        {'korean': '로켓', 'english': 'rocket', 'search': 'space+rocket'},
-        {'korean': '요트', 'english': 'yacht', 'search': 'luxury+yacht'},
-        {'korean': '잠수함', 'english': 'submarine', 'search': 'yellow+submarine'},
-        {'korean': '스케이트보드', 'english': 'skateboard', 'search': 'skateboard+trick'},
-        {'korean': '롤러스케이트', 'english': 'roller skates', 'search': 'roller+skates'}
+        {'korean': '자동차', 'english': 'car', 'search_terms': ['red car', 'family car', 'modern car']},
+        {'korean': '버스', 'english': 'bus', 'search_terms': ['school bus', 'city bus', 'yellow bus']},
+        {'korean': '기차', 'english': 'train', 'search_terms': ['passenger train', 'steam train', 'high speed train']},
+        {'korean': '비행기', 'english': 'airplane', 'search_terms': ['passenger airplane', 'boeing 747', 'commercial aircraft']},
+        {'korean': '배', 'english': 'ship', 'search_terms': ['cruise ship', 'cargo ship', 'sailing boat']},
+        {'korean': '자전거', 'english': 'bicycle', 'search_terms': ['red bicycle', 'mountain bike', 'kids bicycle']},
+        {'korean': '오토바이', 'english': 'motorcycle', 'search_terms': ['sports motorcycle', 'harley davidson', 'racing bike']},
+        {'korean': '트럭', 'english': 'truck', 'search_terms': ['delivery truck', 'pickup truck', 'semi truck']},
+        {'korean': '택시', 'english': 'taxi', 'search_terms': ['yellow taxi', 'city taxi', 'cab']},
+        {'korean': '앰뷸런스', 'english': 'ambulance', 'search_terms': ['emergency ambulance', 'medical vehicle', 'rescue ambulance']},
+        {'korean': '소방차', 'english': 'fire truck', 'search_terms': ['red fire truck', 'fire engine', 'emergency vehicle']},
+        {'korean': '경찰차', 'english': 'police car', 'search_terms': ['police patrol car', 'cop car', 'police vehicle']},
+        {'korean': '헬리콥터', 'english': 'helicopter', 'search_terms': ['rescue helicopter', 'military helicopter', 'news helicopter']},
+        {'korean': '지하철', 'english': 'subway', 'search_terms': ['subway train', 'metro train', 'underground train']},
+        {'korean': '스쿠터', 'english': 'scooter', 'search_terms': ['electric scooter', 'vespa scooter', 'kick scooter']},
+        {'korean': '로켓', 'english': 'rocket', 'search_terms': ['space rocket', 'nasa rocket', 'rocket launch']},
+        {'korean': '요트', 'english': 'yacht', 'search_terms': ['luxury yacht', 'sailing yacht', 'motor yacht']},
+        {'korean': '잠수함', 'english': 'submarine', 'search_terms': ['military submarine', 'yellow submarine', 'underwater vessel']},
+        {'korean': '스케이트보드', 'english': 'skateboard', 'search_terms': ['skateboard deck', 'skateboard tricks', 'street skateboard']},
+        {'korean': '롤러스케이트', 'english': 'roller skates', 'search_terms': ['roller skating', 'quad skates', 'inline skates']}
     ],
     'food': [
-        {'korean': '사과', 'english': 'apple', 'search': 'red+apple'},
-        {'korean': '바나나', 'english': 'banana', 'search': 'yellow+banana'},
-        {'korean': '오렌지', 'english': 'orange', 'search': 'fresh+orange'},
-        {'korean': '딸기', 'english': 'strawberry', 'search': 'fresh+strawberry'},
-        {'korean': '포도', 'english': 'grape', 'search': 'purple+grapes'},
-        {'korean': '수박', 'english': 'watermelon', 'search': 'slice+watermelon'},
-        {'korean': '빵', 'english': 'bread', 'search': 'fresh+bread'},
-        {'korean': '우유', 'english': 'milk', 'search': 'glass+milk'},
-        {'korean': '치즈', 'english': 'cheese', 'search': 'yellow+cheese'},
-        {'korean': '달걀', 'english': 'egg', 'search': 'white+eggs'},
-        {'korean': '쌀', 'english': 'rice', 'search': 'white+rice'},
-        {'korean': '면', 'english': 'noodles', 'search': 'pasta+noodles'},
-        {'korean': '고기', 'english': 'meat', 'search': 'grilled+meat'},
-        {'korean': '생선', 'english': 'fish', 'search': 'cooked+fish'},
-        {'korean': '야채', 'english': 'vegetables', 'search': 'fresh+vegetables'},
-        {'korean': '당근', 'english': 'carrot', 'search': 'orange+carrot'},
-        {'korean': '토마토', 'english': 'tomato', 'search': 'red+tomato'},
-        {'korean': '감자', 'english': 'potato', 'search': 'fresh+potato'},
-        {'korean': '아이스크림', 'english': 'ice cream', 'search': 'vanilla+ice+cream'},
-        {'korean': '케이크', 'english': 'cake', 'search': 'birthday+cake'}
+        {'korean': '사과', 'english': 'apple', 'search_terms': ['red apple', 'green apple', 'fresh apple']},
+        {'korean': '바나나', 'english': 'banana', 'search_terms': ['yellow banana', 'ripe banana', 'banana bunch']},
+        {'korean': '오렌지', 'english': 'orange', 'search_terms': ['fresh orange', 'orange slice', 'citrus orange']},
+        {'korean': '딸기', 'english': 'strawberry', 'search_terms': ['fresh strawberry', 'ripe strawberry', 'strawberry close up']},
+        {'korean': '포도', 'english': 'grape', 'search_terms': ['purple grapes', 'green grapes', 'grape cluster']},
+        {'korean': '수박', 'english': 'watermelon', 'search_terms': ['watermelon slice', 'fresh watermelon', 'red watermelon']},
+        {'korean': '빵', 'english': 'bread', 'search_terms': ['fresh bread', 'whole wheat bread', 'artisan bread']},
+        {'korean': '우유', 'english': 'milk', 'search_terms': ['glass of milk', 'fresh milk', 'dairy milk']},
+        {'korean': '치즈', 'english': 'cheese', 'search_terms': ['cheddar cheese', 'swiss cheese', 'cheese slices']},
+        {'korean': '달걀', 'english': 'egg', 'search_terms': ['chicken eggs', 'brown eggs', 'fresh eggs']},
+        {'korean': '쌀', 'english': 'rice', 'search_terms': ['white rice', 'cooked rice', 'rice grains']},
+        {'korean': '면', 'english': 'noodles', 'search_terms': ['pasta noodles', 'ramen noodles', 'italian pasta']},
+        {'korean': '고기', 'english': 'meat', 'search_terms': ['grilled meat', 'beef steak', 'cooked meat']},
+        {'korean': '생선', 'english': 'fish', 'search_terms': ['grilled fish', 'salmon fillet', 'cooked fish']},
+        {'korean': '야채', 'english': 'vegetables', 'search_terms': ['fresh vegetables', 'mixed vegetables', 'healthy vegetables']},
+        {'korean': '당근', 'english': 'carrot', 'search_terms': ['orange carrot', 'fresh carrot', 'baby carrots']},
+        {'korean': '토마토', 'english': 'tomato', 'search_terms': ['red tomato', 'fresh tomato', 'cherry tomato']},
+        {'korean': '감자', 'english': 'potato', 'search_terms': ['russet potato', 'fresh potato', 'baked potato']},
+        {'korean': '아이스크림', 'english': 'ice cream', 'search_terms': ['vanilla ice cream', 'chocolate ice cream', 'ice cream cone']},
+        {'korean': '케이크', 'english': 'cake', 'search_terms': ['birthday cake', 'chocolate cake', 'layer cake']}
     ],
     'colors': [
-        {'korean': '빨간색', 'english': 'red', 'search': 'red+color'},
-        {'korean': '파란색', 'english': 'blue', 'search': 'blue+color'},
-        {'korean': '노란색', 'english': 'yellow', 'search': 'yellow+color'},
-        {'korean': '초록색', 'english': 'green', 'search': 'green+color'},
-        {'korean': '주황색', 'english': 'orange', 'search': 'orange+color'},
-        {'korean': '보라색', 'english': 'purple', 'search': 'purple+color'},
-        {'korean': '분홍색', 'english': 'pink', 'search': 'pink+color'},
-        {'korean': '갈색', 'english': 'brown', 'search': 'brown+color'},
-        {'korean': '검은색', 'english': 'black', 'search': 'black+color'},
-        {'korean': '하얀색', 'english': 'white', 'search': 'white+color'},
-        {'korean': '회색', 'english': 'gray', 'search': 'gray+color'},
-        {'korean': '금색', 'english': 'gold', 'search': 'gold+color'},
-        {'korean': '은색', 'english': 'silver', 'search': 'silver+color'},
-        {'korean': '하늘색', 'english': 'sky blue', 'search': 'sky+blue'},
-        {'korean': '연두색', 'english': 'light green', 'search': 'light+green'},
-        {'korean': '남색', 'english': 'navy', 'search': 'navy+blue'},
-        {'korean': '청록색', 'english': 'turquoise', 'search': 'turquoise+color'},
-        {'korean': '자주색', 'english': 'violet', 'search': 'violet+color'},
-        {'korean': '크림색', 'english': 'cream', 'search': 'cream+color'},
-        {'korean': '베이지색', 'english': 'beige', 'search': 'beige+color'}
+        {'korean': '빨간색', 'english': 'red', 'search_terms': ['red color', 'bright red', 'red background']},
+        {'korean': '파란색', 'english': 'blue', 'search_terms': ['blue color', 'sky blue', 'blue background']},
+        {'korean': '노란색', 'english': 'yellow', 'search_terms': ['yellow color', 'bright yellow', 'yellow background']},
+        {'korean': '초록색', 'english': 'green', 'search_terms': ['green color', 'forest green', 'green background']},
+        {'korean': '주황색', 'english': 'orange', 'search_terms': ['orange color', 'bright orange', 'orange background']},
+        {'korean': '보라색', 'english': 'purple', 'search_terms': ['purple color', 'violet purple', 'purple background']},
+        {'korean': '분홍색', 'english': 'pink', 'search_terms': ['pink color', 'hot pink', 'pink background']},
+        {'korean': '갈색', 'english': 'brown', 'search_terms': ['brown color', 'chocolate brown', 'brown background']},
+        {'korean': '검은색', 'english': 'black', 'search_terms': ['black color', 'pure black', 'black background']},
+        {'korean': '하얀색', 'english': 'white', 'search_terms': ['white color', 'pure white', 'white background']},
+        {'korean': '회색', 'english': 'gray', 'search_terms': ['gray color', 'light gray', 'gray background']},
+        {'korean': '금색', 'english': 'gold', 'search_terms': ['gold color', 'metallic gold', 'golden background']},
+        {'korean': '은색', 'english': 'silver', 'search_terms': ['silver color', 'metallic silver', 'silver background']},
+        {'korean': '하늘색', 'english': 'sky blue', 'search_terms': ['sky blue color', 'light blue', 'azure blue']},
+        {'korean': '연두색', 'english': 'light green', 'search_terms': ['light green color', 'lime green', 'pale green']},
+        {'korean': '남색', 'english': 'navy', 'search_terms': ['navy blue color', 'dark blue', 'navy background']},
+        {'korean': '청록색', 'english': 'turquoise', 'search_terms': ['turquoise color', 'cyan blue', 'teal color']},
+        {'korean': '자주색', 'english': 'violet', 'search_terms': ['violet color', 'deep purple', 'violet background']},
+        {'korean': '크림색', 'english': 'cream', 'search_terms': ['cream color', 'off white', 'cream background']},
+        {'korean': '베이지색', 'english': 'beige', 'search_terms': ['beige color', 'tan color', 'beige background']}
     ],
     'family': [
-        {'korean': '엄마', 'english': 'mom', 'search': 'happy+mother'},
-        {'korean': '아빠', 'english': 'dad', 'search': 'happy+father'},
-        {'korean': '할머니', 'english': 'grandmother', 'search': 'grandmother+smiling'},
-        {'korean': '할아버지', 'english': 'grandfather', 'search': 'grandfather+smiling'},
-        {'korean': '형', 'english': 'older brother', 'search': 'teenage+boy'},
-        {'korean': '누나', 'english': 'older sister', 'search': 'teenage+girl'},
-        {'korean': '동생', 'english': 'younger sibling', 'search': 'cute+children'},
-        {'korean': '아기', 'english': 'baby', 'search': 'cute+baby'},
-        {'korean': '이모', 'english': 'aunt', 'search': 'young+woman'},
-        {'korean': '삼촌', 'english': 'uncle', 'search': 'young+man'},
-        {'korean': '사촌', 'english': 'cousin', 'search': 'children+playing'},
-        {'korean': '가족', 'english': 'family', 'search': 'happy+family'},
-        {'korean': '부모님', 'english': 'parents', 'search': 'loving+parents'},
-        {'korean': '자녀', 'english': 'children', 'search': 'happy+children'},
-        {'korean': '아들', 'english': 'son', 'search': 'young+boy'},
-        {'korean': '딸', 'english': 'daughter', 'search': 'young+girl'},
-        {'korean': '손자', 'english': 'grandson', 'search': 'little+boy'},
-        {'korean': '손녀', 'english': 'granddaughter', 'search': 'little+girl'},
-        {'korean': '조카', 'english': 'nephew/niece', 'search': 'small+child'},
-        {'korean': '친구', 'english': 'friend', 'search': 'children+friends'}
+        {'korean': '엄마', 'english': 'mom', 'search_terms': ['happy mother', 'mom with child', 'loving mother']},
+        {'korean': '아빠', 'english': 'dad', 'search_terms': ['happy father', 'dad with child', 'loving father']},
+        {'korean': '할머니', 'english': 'grandmother', 'search_terms': ['smiling grandmother', 'elderly woman', 'grandma portrait']},
+        {'korean': '할아버지', 'english': 'grandfather', 'search_terms': ['smiling grandfather', 'elderly man', 'grandpa portrait']},
+        {'korean': '형', 'english': 'older brother', 'search_terms': ['teenage boy', 'young man', 'brother portrait']},
+        {'korean': '누나', 'english': 'older sister', 'search_terms': ['teenage girl', 'young woman', 'sister portrait']},
+        {'korean': '동생', 'english': 'younger sibling', 'search_terms': ['young child', 'little kid', 'cute child']},
+        {'korean': '아기', 'english': 'baby', 'search_terms': ['cute baby', 'smiling baby', 'infant portrait']},
+        {'korean': '이모', 'english': 'aunt', 'search_terms': ['young woman', 'friendly woman', 'aunt portrait']},
+        {'korean': '삼촌', 'english': 'uncle', 'search_terms': ['young man', 'friendly man', 'uncle portrait']},
+        {'korean': '사촌', 'english': 'cousin', 'search_terms': ['children together', 'kids playing', 'young relatives']},
+        {'korean': '가족', 'english': 'family', 'search_terms': ['happy family', 'family portrait', 'family together']},
+        {'korean': '부모님', 'english': 'parents', 'search_terms': ['mother father together', 'happy parents', 'parent couple']},
+        {'korean': '자녀', 'english': 'children', 'search_terms': ['happy children', 'kids together', 'brother sister']},
+        {'korean': '아들', 'english': 'son', 'search_terms': ['young boy', 'little boy', 'son portrait']},
+        {'korean': '딸', 'english': 'daughter', 'search_terms': ['young girl', 'little girl', 'daughter portrait']},
+        {'korean': '손자', 'english': 'grandson', 'search_terms': ['little boy', 'young grandson', 'cute boy']},
+        {'korean': '손녀', 'english': 'granddaughter', 'search_terms': ['little girl', 'young granddaughter', 'cute girl']},
+        {'korean': '조카', 'english': 'nephew/niece', 'search_terms': ['young child', 'nephew niece', 'little relative']},
+        {'korean': '친구', 'english': 'friend', 'search_terms': ['children friends', 'kids playing together', 'best friends']}
     ]
 }
 
@@ -251,6 +260,21 @@ if 'memorized_cards' not in st.session_state:
 if 'difficult_cards' not in st.session_state:
     st.session_state.difficult_cards = set()
 
+def get_image_url(word_data, index):
+    """각 단어별로 고유한 이미지 URL 생성"""
+    search_term = random.choice(word_data['search_terms'])
+    
+    # 여러 이미지 소스 사용
+    image_sources = [
+        f"https://images.unsplash.com/photo-1574158622682-e40e69881006?w=320&h=240&fit=crop&auto=format&q=80&fm=jpg&crop=faces&facepad=3&ixid={search_term.replace(' ', '')}{index}",
+        f"https://images.unsplash.com/photo-1544568100-847a948585b9?w=320&h=240&fit=crop&auto=format&q=80&fm=jpg&crop=entropy&ixid={search_term.replace(' ', '')}{index}",
+        f"https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=320&h=240&fit=crop&auto=format&q=80&fm=jpg&crop=entropy&ixid={search_term.replace(' ', '')}{index}",
+        f"https://picsum.photos/320/240?random={abs(hash(search_term + str(index))) % 1000}",
+        f"https://via.placeholder.com/320x240/4299e1/ffffff?text={word_data['english'].replace(' ', '+')}"
+    ]
+    
+    return random.choice(image_sources)
+
 def get_cards(category, card_count):
     """카테고리별 단어 카드 생성"""
     words = WORD_LISTS.get(category, [])
@@ -262,20 +286,13 @@ def get_cards(category, card_count):
     
     cards = []
     for i, word in enumerate(selected_words):
-        # Pixabay API 사용 (더 안정적)
-        image_url = f"https://pixabay.com/get/g5e8b3a3f8c4c1d8f8b4a4c5d8f4a4c1d.jpg"
-        # 대체 이미지 URL들
-        fallback_urls = [
-            f"https://images.unsplash.com/photo-1574158622682-e40e69881006?w=350&h=250&fit=crop&auto=format",
-            f"https://via.placeholder.com/350x250/4299e1/ffffff?text={word['english'].replace(' ', '+')}",
-            f"https://picsum.photos/350/250?random={i}"
-        ]
+        image_url = get_image_url(word, i)
         
         cards.append({
             'korean': word['korean'],
             'english': word['english'],
-            'image_url': f"https://images.unsplash.com/photo-1574158622682-e40e69881006?w=350&h=250&fit=crop&auto=format&q={word['search']}",
-            'fallback_urls': fallback_urls,
+            'image_url': image_url,
+            'search_terms': word['search_terms'],
             'id': i
         })
     
@@ -318,17 +335,10 @@ def create_tts_html(word):
     """
     return html_code
 
-def create_image_with_fallback(image_url, fallback_urls, alt_text):
-    """이미지를 안전하게 표시하는 함수"""
-    try:
-        return f'<img src="{image_url}" alt="{alt_text}" class="card-image" onerror="this.onerror=null; this.src=\'{fallback_urls[0] if fallback_urls else "https://via.placeholder.com/350x250/4299e1/ffffff?text=" + alt_text.replace(" ", "+")}\'">'
-    except:
-        return f'<div class="image-loading">📷 {alt_text}</div>'
-
 # 메인 헤더 - 중앙 정렬 보장
 st.markdown(
     '<div style="width: 100%; display: flex; justify-content: center;">'
-    '<h1 class="main-header">🌟 아이들을 위한 영어 카드 🌟</h1>'
+    '<h1 class="main-header">🌟 아이들을 위한 영어 카드 ��</h1>'
     '</div>', 
     unsafe_allow_html=True
 )
@@ -396,41 +406,20 @@ if st.session_state.cards:
             progress = (current_filtered_index + 1) / len(filtered_indices)
             st.progress(progress)
         
-        # 카드 표시 - 중앙 정렬 보장
-        col1, col2, col3 = st.columns([1, 3, 1])
+        # 카드 표시 - 완전 중앙 정렬
+        col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.markdown('<div class="card-container">', unsafe_allow_html=True)
             
-            # 이미지 표시
-            st.markdown('<div class="image-container">', unsafe_allow_html=True)
+            # 이미지 표시 - 컨테이너 내부에서 중앙 정렬
+            st.markdown('<div class="card-image-container">', unsafe_allow_html=True)
             try:
                 st.image(
                     current_card['image_url'], 
-                    caption=current_card['english'],
-                    use_container_width=False,
-                    width=350
+                    use_container_width=True
                 )
             except:
-                # 대체 이미지들 시도
-                fallback_displayed = False
-                for fallback_url in current_card.get('fallback_urls', []):
-                    try:
-                        st.image(
-                            fallback_url,
-                            caption=current_card['english'],
-                            use_container_width=False,
-                            width=350
-                        )
-                        fallback_displayed = True
-                        break
-                    except:
-                        continue
-                
-                if not fallback_displayed:
-                    st.markdown(
-                        f'<div class="image-loading">📷 {current_card["english"]}</div>',
-                        unsafe_allow_html=True
-                    )
+                st.markdown('<div class="image-loading">📷 이미지 로딩중...</div>', unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
             
@@ -473,6 +462,12 @@ if st.session_state.cards:
             
             with col_c:
                 if st.button("🔄 새로고침", key=f"refresh_{actual_index}", use_container_width=True):
+                    # 새로운 이미지 URL 생성
+                    new_image_url = get_image_url({
+                        'english': current_card['english'],
+                        'search_terms': current_card['search_terms']
+                    }, actual_index + random.randint(1000, 9999))
+                    st.session_state.cards[actual_index]['image_url'] = new_image_url
                     st.rerun()
             
             st.markdown('</div>', unsafe_allow_html=True)
@@ -546,5 +541,5 @@ else:
         4. **✅ 외웠어요** 버튼으로 학습 완료 표시
         5. **❌ 어려워요** 버튼으로 복습 필요 표시
         6. **⬅️➡️ 버튼**으로 카드 넘기기
-        7. **필터 기능**으로 학습한 카드만 모아보기
+        7. **🔄 새로고침**으로 다른 이미지 보기
         """)
